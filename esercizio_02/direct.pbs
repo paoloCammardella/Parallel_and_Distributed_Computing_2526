@@ -1,0 +1,18 @@
+#!/bin/bash
+#PBS -q studenti
+#PBS -l nodes=8:ppn=8
+#PBS -l mem=1GB
+#PBS -N laplace_main
+#PBS -o laplace_main.out
+#PBS -e laplace_main.err
+
+cd $PBS_O_WORKDIR
+: > laplace_main.out
+: > laplace_main.err
+sort -u $PBS_NODEFILE > machinefile
+NCPU=`wc -l < machinefile`
+echo "Il job e' in esecuzione sugli" $NCPU " nodi:"
+MPI_DIR=/usr/lib64/openmpi/1.4-gcc/bin
+$MPI_DIR/mpicc -o laplace_main laplace_main.c
+echo "Il job e' in esecuzione sugli" $NCPU " nodi:"
+$MPI_DIR/mpiexec -np $NCPU -machinefile machinefile ./laplace_main

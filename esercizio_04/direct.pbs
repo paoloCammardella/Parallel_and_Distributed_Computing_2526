@@ -1,0 +1,31 @@
+#!/bin/bash
+#PBS -q studenti
+#PBS -l nodes=2:ppn=2
+#PBS -l mem=2GB
+#PBS -N matmatdist
+#PBS -o matmat.out
+#PBS -e matmat.err
+
+cd $PBS_O_WORKDIR
+
+# pulizia file di output
+: > matmat.out
+: > matmat.err
+
+# file dei nodi
+sort -u $PBS_NODEFILE > machinefile
+NCPU=wc -l < machinefile
+
+echo "Job in esecuzione su $NCPU core"
+echo "Nodi allocati:"
+cat machinefile
+
+MPI_DIR=/usr/lib64/openmpi/1.4-gcc/bin
+
+$MPI_DIR/mpicc -O3 main.c matmatdist.c -o matmatdist -fopenmp
+
+# numero processi MPI
+NP=2
+
+# esecuzione
+$MPI_DIR/mpiexec -np $NP -machinefile machinefile ./matmatdist
