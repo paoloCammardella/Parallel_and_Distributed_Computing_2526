@@ -18,7 +18,7 @@ double maxsum(int N, int LD, double *A, int NT)
 
     for (i = start; i < end; i++)
     {
-      for (j = i; j < N; j++)
+      for (j = 0; j < N; j++)
       {
         sum = sum + sqrt(A[i * LD + j]);
       }
